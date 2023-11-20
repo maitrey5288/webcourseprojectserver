@@ -2,6 +2,7 @@ const Investment = require('../models/InvestmentOP')
 const Category = require('../models/Category')
 const User = require('../models/user')
  const Profile = require('../models/Profile')
+const user = require('../models/user')
  const cloudinary = require('cloudinary').v2
  function isFileTypeSupported(type,supportedTypes) {
      return supportedTypes.includes(type);
@@ -188,8 +189,9 @@ console.log("hi",InvestmentDetails.user,"project",user.id)
 
  exports.getAllInvestments = async(req,res) => {
 try {
-    const InvestmentDetails  = await Investment.find().populate({path:'category'})
-
+    const InvestmentDetails  = await Investment.find().populate({path:'category'}).populate({path:'user'})
+    
+    
     return res.status(200).json({
         success : true,
         message : 'Investment deleted successfully',
@@ -197,7 +199,7 @@ try {
     })
 
 } catch (error) {
-    
+    console.log(error)
 }
 
  }

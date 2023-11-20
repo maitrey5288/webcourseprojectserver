@@ -3,6 +3,7 @@ const cloudinary = require('cloudinary').v2
 const User = require("../models/user")
 const Profile = require("../models/Profile")
 const Category = require('../models/Category')
+const nodemailer = require('nodemailer')
 const { findById } = require("../models/InvestmentOP")
 function isFileTypeSupported(type,supportedTypes) {
     return supportedTypes.includes(type);
@@ -400,6 +401,108 @@ exports.getLikedProjects = async(req,res) => {
 
     } catch (error) {
         
+    }
+}
+exports.contactTeamMembers = async(req,res) => {
+    try {
+        
+        const user = req.user
+
+        const userDetails = await User.findById(user.id);
+        const profileDetails = await Profile.findById(userDetails.profile)
+
+        const {teamMembers} = req.body
+        console.log("here",teamMembers,req.body)
+        let transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            auth:{
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+        })
+        for (const member of teamMembers) {
+           
+            console.log("hi",member)
+            let info = await transporter.sendMail ({
+                from: `Sparktank`,
+                to: member,
+                subject: "A user wants to contact you",
+                html: ` <h1>Hello</h1>
+                <h3>${userDetails.firstName} ${userDetails.lastName} is interested in your project. He wants to contact you.Please communicate with him if you are interested.Email is mentioned below</h3>
+                <h4>details of the user :-</h4>
+                <h5>name - ${userDetails.firstName} ${userDetails.lastName}</h5>
+                <h5>email - ${userDetails.email} </h5>
+                <h5>Contact Number - ${profileDetails.contactNumber}</h5>
+                <h5>About - ${profileDetails.about}</h5>
+        `
+            })
+            console.log("hello")
+        };
+
+        return res.status(200).json({
+            success:true,
+            message : 'email sent to team members',
+         
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success : false,
+            message : 'error occured', 
+        });
+    }
+}
+exports.contactInvestor = async(req,res) => {
+    try {
+        
+        const user = req.user
+
+        const userDetails = await User.findById(user.id);
+        const profileDetails = await Profile.findById(userDetails.profile)
+
+        const {investor} = req.body
+      
+        let transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            auth:{
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+        })
+       
+           
+            console.log("hi",investor)
+            let info = await transporter.sendMail ({
+                from: `Sparktank`,
+                to: investor,
+                subject: "A user is Contacting",
+                html: ` <h1>Hello Investor</h1>
+                <h3>${userDetails.firstName} ${userDetails.lastName} is interested in your Investment. He wants to contact you.Please communicate with him if you are interested.Email is mentioned below</h3>
+                <h4>details of the user :-</h4>
+                <h5>name - ${userDetails.firstName} ${userDetails.lastName}</h5>
+                <h5>email - ${userDetails.email} </h5>
+                <h5>Contact Number - ${profileDetails.contactNumber}</h5>
+                <h5>About - ${profileDetails.about}</h5>
+        `
+            })
+            console.log("hello")
+       
+
+        return res.status(200).json({
+            success:true,
+            message : 'email sent to investor',
+         
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success : false,
+            message : 'error occured', 
+        });
     }
 }
  

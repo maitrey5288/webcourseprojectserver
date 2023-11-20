@@ -1,11 +1,11 @@
 const express = require('express');
 const  router = express.Router();
 
-const {login,signup,getUserData,confirmMail} =require('../controller/Auth')
+const {login,signup,getUserData,confirmMail,updateProfile} =require('../controller/Auth')
 const {auth,isProjectOwner,isInvestor,isAdmin}  = require('../middlewares/auth')
 const {createProject} =require('../controller/Project')
 const {getAllCategories} = require('../controller/Category')
-const {checkEmails} = require('../controller/Project')
+const {checkEmails,contactTeamMembers,contactInvestor} = require('../controller/Project')
 const {getProjectDetails,deleteProject,getProjectDetailsByID,updateProject,getAllProjects,likeProject,unlikeProject,getLikedProjects}  =require('../controller/Project')
 const {createInvestmentOp,getInvestmentOps,getInvestmentById,deleteInvestment,getAllInvestments} = require('../controller/Investment')
 const {getAllNotification} = require ('../controller/Notification')
@@ -31,6 +31,9 @@ router.post('/unlikeProject',auth,unlikeProject)
 router.post('/getLikedProjects',auth,getLikedProjects)
 router.get('/getAllProjects',getAllProjects)
 router.get('/getAllInvestments',getAllInvestments)
+router.post('/editProfile',auth,updateProfile)
+router.post('/contactTeamMembers',auth,contactTeamMembers)
+router.post('/getAllInvestments',auth,contactInvestor)
  
 
 router.get('/test',auth,(req,res)=>{

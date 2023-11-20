@@ -221,3 +221,39 @@ catch (error) {
 
     
 }
+
+exports.updateProfile = async(req,res) => {
+    try
+  { 
+     
+    const user = req.user;
+    const {dateOfBirth,about,contactNumber,gender} = req.body ;
+     const userDetails = await User.findById(user.id);
+     const a = {
+        dateOfBirth :  dateOfBirth,
+        about :  about,
+        contactNumber :  contactNumber,
+        gender :gender
+      
+       }
+       console.log("user",user)
+     const profileDetails = await Profile.findByIdAndUpdate(userDetails.profile,a,{new:true}) 
+console.log(profileDetails)
+    return res.status(200).json({
+        success:true,
+        message:"profile updated",
+        profileDetails : profileDetails
+    })
+}
+catch (error) {
+    console.log(error)
+    return res.status(500).json({
+        success:false,
+        message : 'error occured',
+    });
+}
+
+
+
+    
+}
